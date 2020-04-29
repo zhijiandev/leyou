@@ -15,7 +15,7 @@ import java.util.List;
 
 @Controller
 @RequestMapping("category")
-public class CategotyController {
+public class CategoryController {
 
     @Autowired
     private CategoryService categoryService;
@@ -41,5 +41,15 @@ public class CategotyController {
         }
         //200查询成功
         return ResponseEntity.ok(categories);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<String>> queryNamesByIds(@RequestParam("ids")List<Long> ids){
+        List<String> names = this.categoryService.queryNamesByIds(ids);
+        if(CollectionUtils.isEmpty(names)){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(names);
+
     }
 }
