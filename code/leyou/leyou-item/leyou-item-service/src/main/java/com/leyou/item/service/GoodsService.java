@@ -181,4 +181,8 @@ public class GoodsService {
 
         //sendMsg("update",spuBo.getId());
     }
+
+    public Spu querySpuById(Long id) {
+        return this.spuMapper.selectByPrimaryKey(id);
+    }
 }
