@@ -7,6 +7,8 @@ import com.leyou.item.bo.SpuBo;
 import com.leyou.item.mapper.*;
 import com.leyou.item.pojo.*;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.amqp.AmqpException;
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,6 +40,9 @@ public class GoodsService {
 
     @Autowired
     private StockMapper stockMapper;
+
+    @Autowired
+    private AmqpTemplate amqpTemplate;
 
     /**
      *根据条件分页查询spu
@@ -99,10 +104,20 @@ public class GoodsService {
         spuDetail.setSpuId(spuBo.getId());
         this.spuDetailMapper.insertSelective(spuDetail);
 
-        savaSkuAndStock(spuBo);
+        saveSkuAndStock(spuBo);
+
+        sendMsg("insert",spuBo.getId());
     }
 
-    private void savaSkuAndStock(SpuBo spuBo) {
+    private void sendMsg(String type,Long id) {
+        try {
+            this.amqpTemplate.convertAndSend("item."+type,id);
+        } catch (AmqpException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void saveSkuAndStock(SpuBo spuBo) {
         spuBo.getSkus().forEach(sku -> {
             //新增sku
             sku.setId(null);
@@ -169,7 +184,7 @@ public class GoodsService {
         this.skuMapper.delete(sku);
 
         //新增sku和新增stock
-        this.savaSkuAndStock(spuBo);
+        this.saveSkuAndStock(spuBo);
 
         //更新spu和spuDetail
         spuBo.setCreateTime(null);
@@ -179,7 +194,7 @@ public class GoodsService {
         this.spuMapper.updateByPrimaryKeySelective(spuBo);
         this.spuDetailMapper.updateByPrimaryKeySelective(spuBo.getSpuDetail());
 
-        //sendMsg("update",spuBo.getId());
+        sendMsg("update",spuBo.getId());
     }
 
     public Spu querySpuById(Long id) {

@@ -8,8 +8,8 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableFeignClients
-public class LeyouGoosWebApplication {
+public class LeyouGoodsWebApplication {
     public static void main(String[] args) {
-        SpringApplication.run(LeyouGoosWebApplication.class);
+        SpringApplication.run(LeyouGoodsWebApplication.class);
     }
 }
