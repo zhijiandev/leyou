@@ -71,7 +71,7 @@
                     <div class="controls">
                         <input type="text" placeholder="请输入你的手机号" class="input-xfat input-xlarge"
                                v-model="user.phone" name="phone" data-vv-as="手机号"
-                               v-validate="{required:true,regex:/^1[35678]\d{9}$/,useful:2}">
+                               v-validate="{required:true,regex:/^1[345678]\d{9}$/,useful:2}">
                     </div>
                     <span style="color: red;">{{ errors.first('phone') }}</span>
                 </div>
